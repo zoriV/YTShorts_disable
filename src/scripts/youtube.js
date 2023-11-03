@@ -1,8 +1,15 @@
-const shortsQuery =
-  "ytd-rich-grid-renderer > #contents ytd-rich-section-renderer:not(:has(ytd-post-renderer))";
 const CONSOLE_PREFIX = "[YTShorts_disable]";
-const mainPageObserverTarget = "ytd-rich-grid-renderer > #contents";
-const playerObserverTarget = "#items > #contents";
+const shortsQueries = {
+  main: "ytd-rich-grid-renderer > #contents ytd-rich-section-renderer:not(:has(ytd-post-renderer))",
+  player:
+    "ytd-watch-next-secondary-results-renderer #items #contents ytd-reel-shelf-renderer", // :has(#title-container)
+};
+const observerTargets = {
+  main: "ytd-rich-grid-renderer > #contents",
+  player: "ytd-watch-next-secondary-results-renderer #items #contents",
+};
+const shortsButton =
+  "ytd-guide-renderer > #sections > ytd-guide-section-renderer > #items > ytd-guide-entry-renderer:nth-child(2)";
 
 const isVideoPlayer = new URL(window.location.href).pathname === "/watch";
 
@@ -11,31 +18,31 @@ const logWithPrefix = (...message) => {
 };
 
 const getAllShortTabs = () => {
-  return document.querySelectorAll(shortsQuery);
+  return document.querySelectorAll(
+    isVideoPlayer ? shortsQueries["player"] : shortsQueries["main"]
+  );
 };
 
 const getVideosContainer = () => {
   return document.querySelector(
-    isVideoPlayer ? playerObserverTarget : mainPageObserverTarget
+    isVideoPlayer ? observerTargets["player"] : observerTargets["main"]
   );
 };
 
+const hideShortsButton = () => {
+  document.querySelector(shortsButton).style.setProperty("display", "none");
+};
+
 const removeShorts = () => {
+  console.log(getAllShortTabs());
   getAllShortTabs().forEach((tab) => {
-    console.log(tab);
     tab.remove();
     logWithPrefix("Found and removed shorts");
   });
 };
 
-const observer = new MutationObserver(function (mutationsList) {
-  mutationsList
-    .filter((v) => {
-      return v.type === "childList";
-    })
-    .forEach(() => {
-      removeShorts();
-    });
+const observer = new MutationObserver(() => {
+  removeShorts();
 });
 
 const observerConfig = {
@@ -44,5 +51,19 @@ const observerConfig = {
   subtree: false,
 };
 
-removeShorts(); // remove all shorts at startup
-observer.observe(getVideosContainer(), observerConfig); // observe
+const observeTarget = () => {
+  const target = getVideosContainer();
+  if (target) {
+    logWithPrefix(`Successfully loaded (video player: ${isVideoPlayer})`);
+
+    removeShorts(); // remove all shorts at startup
+    observer.observe(target, observerConfig); // observe
+  } else {
+    setTimeout(observeTarget, 150);
+  }
+};
+
+window.addEventListener("load", async () => {
+  if (!isVideoPlayer) hideShortsButton();
+  observeTarget();
+});

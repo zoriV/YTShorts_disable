@@ -1,15 +1,15 @@
 {
   "name": "YTShorts_disable",
-  "version": "1.0.2",
-  "description": "Get rid of all youtube shorts",
+  "version": "1.0",
+  "description": "Get rid of youtube shorts",
   "manifest_version": 3,
   "author": "Viroz",
-  "permissions": ["https://www.youtube.com/*"],
+  "permissions": ["storage"],
   "content_scripts": [
     {
       "js": ["./src/scripts/youtube.js"],
       "matches": ["https://*.youtube.com/*"],
-      "run_at": "document_idle"
+      "run_at": "document_end"
     }
   ]
 }
