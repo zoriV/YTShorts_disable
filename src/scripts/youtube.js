@@ -11,7 +11,7 @@ const observerTargets = {
 const shortsButton =
   "ytd-guide-renderer > #sections > ytd-guide-section-renderer > #items > ytd-guide-entry-renderer:nth-child(2)";
 
-const isVideoPlayer = new URL(window.location.href).pathname === "/watch";
+let isVideoPlayer;
 
 const logWithPrefix = (...message) => {
   console.log(CONSOLE_PREFIX, ...message);
@@ -34,7 +34,6 @@ const hideShortsButton = () => {
 };
 
 const removeShorts = () => {
-  console.log(getAllShortTabs());
   getAllShortTabs().forEach((tab) => {
     tab.remove();
     logWithPrefix("Found and removed shorts");
@@ -45,25 +44,44 @@ const observer = new MutationObserver(() => {
   removeShorts();
 });
 
-const observerConfig = {
-  attributes: false,
-  childList: true,
-  subtree: false,
-};
-
 const observeTarget = () => {
   const target = getVideosContainer();
   if (target) {
-    logWithPrefix(`Successfully loaded (video player: ${isVideoPlayer})`);
-
     removeShorts(); // remove all shorts at startup
-    observer.observe(target, observerConfig); // observe
+    observer.observe(target, {
+      attributes: false,
+      childList: true,
+      subtree: false,
+    }); // observe
+
+    logWithPrefix(`Successfully loaded (video player: ${isVideoPlayer})`);
   } else {
     setTimeout(observeTarget, 150);
   }
 };
 
-window.addEventListener("load", async () => {
+const setup = async () => {
+  isVideoPlayer = new URL(window.location.href).pathname === "/watch";
+
   if (!isVideoPlayer) hideShortsButton();
   observeTarget();
+};
+
+window.addEventListener("load", async () => {
+  setup();
+});
+
+let oldHref = document.location.href;
+
+const locaitonObserver = new MutationObserver(() => {
+  if (oldHref !== document.location.href) {
+    oldHref = document.location.href;
+    logWithPrefix("Detected URL change");
+    setup();
+  }
+});
+
+locaitonObserver.observe(document.querySelector("head"), {
+  childList: true,
+  subtree: true,
 });
