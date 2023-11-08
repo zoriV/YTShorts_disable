@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Disable YTShorts</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./script.js" type="module" defer></script>
+  </head>
+  <body>
+    <main>
+      <div class="mainSwitch">
+        <input type="checkbox" id="mainSwitch" data-option-name="MAIN" />
+        <label for="mainSwitch">
+          <img
+            src="./assets/switch.png"
+            alt="main switch icon"
+            width="50"
+            height="50"
+          />
+        </label>
+      </div>
+      <div class="options" id="optionsContainer">
+        <div class="option">
+          <input type="checkbox" id="homepage" data-option-name="HOME" />
+          <label for="homepage">Enable shorts on home page</label>
+        </div>
+        <div class="option">
+          <input
+            type="checkbox"
+            id="recommendations"
+            data-option-name="RECOMMENDATIONS"
+          />
+          <label for="recommendations">Enable shorts in recommendations</label>
+        </div>
+        <div class="option">
+          <input type="checkbox" id="button" data-option-name="BUTTON" />
+          <label for="button">Enable shorts button</label>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

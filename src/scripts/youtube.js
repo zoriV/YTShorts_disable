@@ -56,6 +56,7 @@ const observeTarget = () => {
 
     logWithPrefix(`Successfully loaded (video player: ${isVideoPlayer})`);
   } else {
+    logWithPrefix(`Couldn't setup. Retrying in 150ms...`);
     setTimeout(observeTarget, 150);
   }
 };

@@ -5,6 +5,10 @@
   "manifest_version": 3,
   "author": "Viroz",
   "permissions": ["storage"],
+  "action": {
+    "default_popup": "./src/popup/index.html",
+    "default_title": "Youtube shorts disable"
+  },
   "content_scripts": [
     {
       "js": ["./src/scripts/youtube.js"],
