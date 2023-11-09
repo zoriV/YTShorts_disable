@@ -1,4 +1,4 @@
-import { Options } from "./storage.js";
+import { Options } from "../storage.js";
 
 const checkboxes = document.querySelectorAll(
   "#optionsContainer > .option input[type='checkbox'], #mainSwitch"
